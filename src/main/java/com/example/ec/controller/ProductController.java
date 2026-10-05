@@ -77,7 +77,7 @@ public class ProductController {
 		model.addAttribute("product", product);
 		model.addAttribute("currentQuantity", cartQuantities.getOrDefault(productId, 0));
 		model.addAttribute("cartCount", cartQuantities.values().stream().mapToInt(Integer::intValue).sum());
-		return "product-detail";
+		return "products-detail";
 	}
 
 	/**

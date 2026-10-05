@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#17382d">
+  <title th:text="${product.name} + ' | 商品詳細 | ECサイト'">商品詳細 | ECサイト</title>
+  <link rel="stylesheet" th:href="@{/css/products.css}">
+  <script th:src="@{/js/products.js}" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" th:href="@{/products}" aria-label="ECサイト 商品一覧">
+        <span class="brand-mark" aria-hidden="true">e</span><span>ECサイト</span>
+      </a>
+      <a class="cart-link" th:href="@{/cart}" th:attr="aria-label=|カートを見る。現在${cartCount}点|">
+        <span>カートを見る</span><span class="cart-count" aria-live="polite" th:text="${cartCount}">0</span>
+      </a>
+    </div>
+  </header>
+  <main class="page-shell">
+    <p class="breadcrumb"><a th:href="@{/products}">商品一覧</a><span aria-hidden="true">/</span><span>商品詳細</span></p>
+    <section class="detail-layout" aria-labelledby="page-title">
+      <div class="detail-visual">
+        <img th:src="${product.imageUrl}" th:alt="${product.name}" width="1536" height="1024">
+      </div>
+      <div class="detail-info">
+        <p class="eyebrow">THE EXECUTIVE SELECTION · PRODUCT</p>
+        <h1 id="page-title" th:text="${product.name}">商品名</h1>
+        <p class="detail-description" th:text="${product.description}">商品説明</p>
+        <p class="detail-price" th:text="|¥${#numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')}|">¥5,980</p>
+        <p class="detail-stock" th:text="${product.stock > 0 ? '在庫あり' : '在庫なし'}">在庫あり</p>
+        <div class="detail-actions">
+          <form class="add-to-cart-form" th:action="@{/products/cart}" method="post"
+                th:attr="data-product-name=${product.name},data-stock=${product.stock},data-current-quantity=${currentQuantity}">
+            <input type="hidden" name="productId" th:value="${product.productId}">
+            <button class="button button-primary add-to-cart" type="submit"
+                    th:disabled="${product.stock == 0 or currentQuantity >= product.stock}"
+                    th:text="${product.stock == 0 ? '在庫なし' : (currentQuantity >= product.stock ? '追加済み' : 'カートに追加')}">カートに追加</button>
+          </form>
+          <a class="button button-secondary" th:href="@{/cart}">カートを見る</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+</body>
+</html>
