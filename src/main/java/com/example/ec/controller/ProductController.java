@@ -125,6 +125,16 @@ public class ProductController {
 		return "redirect:/cart";
 	}
 
+	@PostMapping("/cart/items")
+	public String addCartItem(@RequestParam Long productId, @RequestParam int quantity,
+			@RequestParam(defaultValue = "/cart") String returnTo, HttpSession session) {
+		Map<Long, Integer> cartQuantities = getCartQuantities(session);
+		int updatedQuantity = cartService.validateAddition(productId,
+				cartQuantities.getOrDefault(productId, 0), quantity);
+		cartQuantities.put(productId, updatedQuantity);
+		return "redirect:" + safeReturnPath(returnTo);
+	}
+
 	/**
 	 * Displays order confirmation after rechecking every cart line against stock.
 	 *
@@ -236,5 +246,12 @@ public class ProductController {
 	 */
 	private BigDecimal getCartTotal(List<CartItemModel> items) {
 		return items.stream().map(CartItemModel::subtotal).reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
+
+	private String safeReturnPath(String returnTo) {
+		if (returnTo != null && returnTo.matches("/products(?:/\\d+)?|/cart")) {
+			return returnTo;
+		}
+		return "/cart";
 	}
 }

@@ -243,6 +243,9 @@ h1 {
 .detail-stock { margin: 0 0 26px; color: var(--green); font-size: 13px; font-weight: 700; }
 .detail-actions { display: grid; gap: 10px; max-width: 380px; }
 .detail-actions .button { min-height: 48px; }
+.detail-actions form { display: grid; grid-template-columns: auto minmax(72px, 100px) 1fr; gap: 10px; align-items: center; }
+.detail-quantity-label { color: var(--muted); font-size: 12px; }
+.detail-quantity-input { width: 100%; min-height: 44px; padding: 8px; border: 1px solid #cfd7d0; border-radius: 2px; background: white; font: inherit; }
 
 .empty-state, .complete-panel { max-width: 700px; margin: 40px auto; padding: clamp(24px, 5vw, 52px); border: 1px solid var(--line); background: var(--surface); text-align: center; }
 .empty-state h2 { margin-top: 0; font-family: Georgia, "Yu Mincho", serif; font-weight: 500; }

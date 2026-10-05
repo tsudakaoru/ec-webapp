@@ -50,9 +50,11 @@
             <p class="product-price" th:text="|¥${#numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')}|">¥5,980</p>
             <div class="card-actions">
               <a class="button button-secondary" th:href="@{/products/{productId}(productId=${product.productId})}">詳細を見る</a>
-              <form class="add-to-cart-form" th:action="@{/products/cart}" method="post"
+              <form class="add-to-cart-form" th:action="@{/cart/items}" method="post"
                     th:attr="data-product-name=${product.name},data-stock=${product.stock},data-current-quantity=${cartQuantities[product.productId]}">
                 <input type="hidden" name="productId" th:value="${product.productId}">
+                <input type="hidden" name="quantity" value="1">
+                <input type="hidden" name="returnTo" value="/products">
                 <button class="button button-primary add-to-cart" type="submit"
                         th:disabled="${product.stock == 0 or cartQuantities[product.productId] >= product.stock}"
                         th:text="${product.stock == 0 ? '在庫なし' : (cartQuantities[product.productId] >= product.stock ? '追加済み' : 'カートに追加')}">カートに追加</button>
