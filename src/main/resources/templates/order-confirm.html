@@ -24,10 +24,19 @@
       </div>
       <div class="cart-summary"><span>お支払い合計</span><strong th:text="|¥${#numbers.formatDecimal(cartTotal, 1, 'COMMA', 0, 'POINT')}|">¥0</strong></div>
     </section>
-    <div class="flow-actions">
-      <a class="button button-secondary" th:href="@{/cart}">カートに戻る</a>
-      <form th:action="@{/orders}" method="post"><button class="button button-primary" type="submit">注文を確定する</button></form>
-    </div>
+    <form class="address-form" th:action="@{/orders}" th:object="${orderForm}" method="post">
+      <h2>配送先情報</h2>
+      <div class="address-fields">
+        <label>氏名<input type="text" th:field="*{customerName}" autocomplete="name" required maxlength="100"><span class="field-error" th:errors="*{customerName}"></span></label>
+        <label>郵便番号<input type="text" th:field="*{postalCode}" autocomplete="postal-code" inputmode="numeric" placeholder="123-4567" required><span class="field-error" th:errors="*{postalCode}"></span></label>
+        <label class="address-field">住所<input type="text" th:field="*{address}" autocomplete="street-address" required maxlength="255"><span class="field-error" th:errors="*{address}"></span></label>
+        <label>電話番号<input type="tel" th:field="*{phoneNumber}" autocomplete="tel" inputmode="tel" required><span class="field-error" th:errors="*{phoneNumber}"></span></label>
+      </div>
+      <div class="flow-actions">
+        <a class="button button-secondary" th:href="@{/cart}">カートに戻る</a>
+        <button class="button button-primary" type="submit">注文を確定する</button>
+      </div>
+    </form>
   </main>
 </body>
 </html>

@@ -8,18 +8,22 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.ec.service.model.CartItemModel;
+import com.example.ec.controller.form.OrderForm;
 import com.example.ec.service.CartService;
 import com.example.ec.service.ProductService;
 import com.example.ec.service.model.ProductModel;
@@ -152,6 +156,7 @@ public class ProductController {
 		model.addAttribute("cartItems", cartItems);
 		model.addAttribute("cartCount", getCartCount(cartQuantities));
 		model.addAttribute("cartTotal", getCartTotal(cartItems));
+		model.addAttribute("orderForm", OrderForm.empty());
 		return "order-confirm";
 	}
 
@@ -162,10 +167,22 @@ public class ProductController {
 	 * @return redirect to the order completion page
 	 */
 	@PostMapping("/orders")
-	public String placeOrder(HttpSession session) {
+	public String placeOrder(@Valid @ModelAttribute("orderForm") OrderForm orderForm,
+			BindingResult bindingResult, HttpSession session, Model model) {
 		Map<Long, Integer> cartQuantities = getCartQuantities(session);
+		if (bindingResult.hasErrors()) {
+			if (cartQuantities.isEmpty()) {
+				return "redirect:/cart";
+			}
+			List<CartItemModel> cartItems = cartService.getCartItems(cartQuantities);
+			model.addAttribute("cartItems", cartItems);
+			model.addAttribute("cartCount", getCartCount(cartQuantities));
+			model.addAttribute("cartTotal", getCartTotal(cartItems));
+			return "order-confirm";
+		}
 		List<CartItemModel> completedOrder = cartService.completeOrder(cartQuantities);
 		session.setAttribute(ORDER_SESSION_KEY, new ArrayList<>(completedOrder));
+		session.setAttribute("completedOrderCustomer", orderForm);
 		cartQuantities.clear();
 		return "redirect:/orders/complete";
 	}
@@ -188,6 +205,7 @@ public class ProductController {
 		model.addAttribute("orderItems", orderItems);
 		model.addAttribute("orderTotal", getCartTotal(orderItems));
 		model.addAttribute("cartCount", getCartCount(getCartQuantities(session)));
+		model.addAttribute("orderForm", session.getAttribute("completedOrderCustomer"));
 		return "order-complete";
 	}
 
