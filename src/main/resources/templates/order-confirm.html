@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#17382d">
+  <title>注文確認 | ECサイト</title>
+  <link rel="stylesheet" th:href="@{/css/products.css}">
+</head>
+<body>
+  <header class="site-header"><div class="header-inner">
+    <a class="brand" th:href="@{/products}" aria-label="ECサイト 商品一覧"><span class="brand-mark" aria-hidden="true">e</span><span>ECサイト</span></a>
+    <a class="cart-link" th:href="@{/cart}" th:attr="aria-label=|カートを見る。現在${cartCount}点|"><span>カートを見る</span><span class="cart-count" th:text="${cartCount}">0</span></a>
+  </div></header>
+  <main class="page-shell">
+    <div class="page-intro"><div><p class="eyebrow">FINAL REVIEW · 03</p><h1 id="page-title">注文確認</h1></div><p class="item-total"><strong th:text="${#numbers.formatInteger(cartCount, 2)}">00</strong> ITEMS</p></div>
+    <section class="confirm-panel" aria-labelledby="confirm-title">
+      <h2 id="confirm-title">ご注文内容</h2>
+      <div class="confirm-list">
+        <div class="confirm-row" th:each="item : ${cartItems}">
+          <div><strong th:text="${item.product.name}">商品名</strong><span th:text="|数量 ${item.quantity}点|">数量 1点</span></div>
+          <strong th:text="|¥${#numbers.formatDecimal(item.subtotal, 1, 'COMMA', 0, 'POINT')}|">¥0</strong>
+        </div>
+      </div>
+      <div class="cart-summary"><span>お支払い合計</span><strong th:text="|¥${#numbers.formatDecimal(cartTotal, 1, 'COMMA', 0, 'POINT')}|">¥0</strong></div>
+    </section>
+    <div class="flow-actions">
+      <a class="button button-secondary" th:href="@{/cart}">カートに戻る</a>
+      <form th:action="@{/orders}" method="post"><button class="button button-primary" type="submit">注文を確定する</button></form>
+    </div>
+  </main>
+</body>
+</html>

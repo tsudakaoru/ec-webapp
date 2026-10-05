@@ -152,7 +152,7 @@ public class ProductController {
 		model.addAttribute("cartItems", cartItems);
 		model.addAttribute("cartCount", getCartCount(cartQuantities));
 		model.addAttribute("cartTotal", getCartTotal(cartItems));
-		return "order-confirmation";
+		return "order-confirm";
 	}
 
 	/**
