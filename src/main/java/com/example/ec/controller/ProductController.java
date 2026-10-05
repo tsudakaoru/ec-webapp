@@ -2,10 +2,10 @@ package com.example.ec.controller;
 
 import java.nio.charset.StandardCharsets;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -27,6 +27,7 @@ import com.example.ec.controller.form.OrderForm;
 import com.example.ec.service.CartService;
 import com.example.ec.service.ProductService;
 import com.example.ec.service.model.ProductModel;
+import com.example.ec.service.model.OrderModel;
 
 /**
  * Handles product catalog and cart addition requests.
@@ -35,7 +36,7 @@ import com.example.ec.service.model.ProductModel;
 public class ProductController {
 
 	private static final String CART_SESSION_KEY = "cartQuantities";
-	private static final String ORDER_SESSION_KEY = "completedOrderItems";
+	private static final String ORDERS_SESSION_KEY = "completedOrders";
 
 	@Autowired
 	private ProductService productService;
@@ -181,10 +182,12 @@ public class ProductController {
 			return "order-confirm";
 		}
 		List<CartItemModel> completedOrder = cartService.completeOrder(cartQuantities);
-		session.setAttribute(ORDER_SESSION_KEY, new ArrayList<>(completedOrder));
-		session.setAttribute("completedOrderCustomer", orderForm);
+		String orderId = UUID.randomUUID().toString();
+		OrderModel order = new OrderModel(orderId, orderForm.customerName(), orderForm.postalCode(),
+				orderForm.address(), orderForm.phoneNumber(), completedOrder, getCartTotal(completedOrder));
+		getCompletedOrders(session).put(orderId, order);
 		cartQuantities.clear();
-		return "redirect:/orders/complete";
+		return "redirect:/orders/complete/" + orderId;
 	}
 
 	/**
@@ -194,18 +197,16 @@ public class ProductController {
 	 * @param model view model
 	 * @return order completion template or redirect to the product list
 	 */
-	@SuppressWarnings("unchecked")
-	@GetMapping("/orders/complete")
-	public String showOrderComplete(HttpSession session, Model model) {
-		Object savedOrder = session.getAttribute(ORDER_SESSION_KEY);
-		if (!(savedOrder instanceof List<?>)) {
+	@GetMapping("/orders/complete/{orderId}")
+	public String showOrderComplete(@PathVariable String orderId, HttpSession session, Model model) {
+		OrderModel order = getCompletedOrders(session).get(orderId);
+		if (order == null) {
 			return "redirect:/products";
 		}
-		List<CartItemModel> orderItems = (List<CartItemModel>) savedOrder;
-		model.addAttribute("orderItems", orderItems);
-		model.addAttribute("orderTotal", getCartTotal(orderItems));
+		model.addAttribute("order", order);
+		model.addAttribute("orderItems", order.items());
+		model.addAttribute("orderTotal", order.total());
 		model.addAttribute("cartCount", getCartCount(getCartQuantities(session)));
-		model.addAttribute("orderForm", session.getAttribute("completedOrderCustomer"));
 		return "order-complete";
 	}
 
@@ -271,5 +272,16 @@ public class ProductController {
 			return returnTo;
 		}
 		return "/cart";
+	}
+
+	@SuppressWarnings("unchecked")
+	private Map<String, OrderModel> getCompletedOrders(HttpSession session) {
+		Object existingOrders = session.getAttribute(ORDERS_SESSION_KEY);
+		if (existingOrders instanceof Map<?, ?>) {
+			return (Map<String, OrderModel>) existingOrders;
+		}
+		Map<String, OrderModel> orders = new LinkedHashMap<>();
+		session.setAttribute(ORDERS_SESSION_KEY, orders);
+		return orders;
 	}
 }

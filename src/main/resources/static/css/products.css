@@ -284,6 +284,8 @@ h1 {
 .address-field { grid-column: 1 / -1; }
 .field-error { min-height: 1em; color: #9a3d2d; font-size: 11px; }
 .delivery-summary { margin: 20px 0; padding: 16px; background: #f0f2ed; text-align: left; }
+.order-number { padding: 12px 16px; border: 1px solid var(--line); font-size: 13px; }
+.order-number strong { margin-left: 10px; font-variant-numeric: tabular-nums; }
 .delivery-summary p { margin: 4px 0; color: var(--muted); font-size: 13px; }
 .delivery-summary p:first-child { color: var(--ink); }
 .confirm-list { border-top: 1px solid var(--line); }

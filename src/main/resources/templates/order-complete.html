@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#17382d">
+  <title>注文完了 | ECサイト</title>
+  <link rel="stylesheet" th:href="@{/css/products.css}">
+</head>
+<body>
+  <header class="site-header"><div class="header-inner">
+    <a class="brand" th:href="@{/products}" aria-label="ECサイト 商品一覧"><span class="brand-mark" aria-hidden="true">e</span><span>ECサイト</span></a>
+    <a class="cart-link" th:href="@{/cart}" aria-label="カートを見る。現在0点"><span>カートを見る</span><span class="cart-count" th:text="${cartCount}">0</span></a>
+  </div></header>
+  <main class="page-shell">
+    <section class="complete-panel" aria-labelledby="page-title">
+      <p class="eyebrow">ORDER COMPLETE · 04</p>
+      <h1 id="page-title">ご注文ありがとうございます</h1>
+      <p class="complete-message">ご注文を承りました。</p>
+      <p class="order-number">ご注文番号 <strong th:text="${order.orderId}">注文番号</strong></p>
+      <div class="delivery-summary">
+        <p><strong>お届け先</strong></p>
+        <p th:text="${order.customerName}">氏名</p>
+        <p th:text="${order.postalCode}">郵便番号</p>
+        <p th:text="${order.address}">住所</p>
+        <p th:text="${order.phoneNumber}">電話番号</p>
+      </div>
+      <div class="confirm-list">
+        <div class="confirm-row" th:each="item : ${orderItems}">
+          <div><strong th:text="${item.product.name}">商品名</strong><span th:text="|数量 ${item.quantity}点|">数量 1点</span></div>
+          <strong th:text="|¥${#numbers.formatDecimal(item.subtotal, 1, 'COMMA', 0, 'POINT')}|">¥0</strong>
+        </div>
+      </div>
+      <div class="cart-summary"><span>ご注文合計</span><strong th:text="|¥${#numbers.formatDecimal(orderTotal, 1, 'COMMA', 0, 'POINT')}|">¥0</strong></div>
+      <a class="button button-primary" th:href="@{/products}">商品一覧に戻る</a>
+    </section>
+  </main>
+</body>
+</html>
