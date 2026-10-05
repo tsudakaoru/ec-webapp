@@ -27,14 +27,13 @@
             <p th:text="${item.product.description}">商品説明</p>
             <strong th:text="|¥${#numbers.formatDecimal(item.product.price, 1, 'COMMA', 0, 'POINT')}|">¥0</strong>
           </div>
-          <form class="quantity-form" th:action="@{/cart/update}" method="post">
-            <input type="hidden" name="productId" th:value="${item.product.productId}">
+          <form class="quantity-form" th:action="@{/cart/items/{productId}/update(productId=${item.product.productId})}" method="post">
             <label th:for="|quantity-${item.product.productId}|">数量</label>
             <input type="number" name="quantity" min="1" th:max="${item.product.stock}" th:value="${item.quantity}" th:id="|quantity-${item.product.productId}|" required>
             <button class="button button-secondary" type="submit">数量を更新</button>
           </form>
           <div class="cart-subtotal"><span>小計</span><strong th:text="|¥${#numbers.formatDecimal(item.subtotal, 1, 'COMMA', 0, 'POINT')}|">¥0</strong></div>
-          <form th:action="@{/cart/remove}" method="post"><input type="hidden" name="productId" th:value="${item.product.productId}"><button class="text-button" type="submit">削除</button></form>
+          <form th:action="@{/cart/items/{productId}/delete(productId=${item.product.productId})}" method="post"><button class="text-button" type="submit">削除</button></form>
         </article>
       </div>
       <div class="cart-summary"><span>合計</span><strong th:text="|¥${#numbers.formatDecimal(cartTotal, 1, 'COMMA', 0, 'POINT')}|">¥0</strong></div>

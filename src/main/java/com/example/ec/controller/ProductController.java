@@ -105,8 +105,8 @@ public class ProductController {
 	 * @param session current user session
 	 * @return redirect to the cart
 	 */
-	@PostMapping("/cart/update")
-	public String updateCartQuantity(@RequestParam Long productId, @RequestParam int quantity, HttpSession session) {
+	@PostMapping("/cart/items/{productId}/update")
+	public String updateCartQuantity(@PathVariable Long productId, @RequestParam int quantity, HttpSession session) {
 		cartService.validateQuantity(productId, quantity);
 		getCartQuantities(session).put(productId, quantity);
 		return "redirect:/cart";
@@ -119,8 +119,8 @@ public class ProductController {
 	 * @param session current user session
 	 * @return redirect to the cart
 	 */
-	@PostMapping("/cart/remove")
-	public String removeCartItem(@RequestParam Long productId, HttpSession session) {
+	@PostMapping("/cart/items/{productId}/delete")
+	public String removeCartItem(@PathVariable Long productId, HttpSession session) {
 		getCartQuantities(session).remove(productId);
 		return "redirect:/cart";
 	}
