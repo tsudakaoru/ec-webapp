@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.ec.repository.ProductRepository">
+	<select id="findOnSaleProducts" resultType="com.example.ec.repository.entity.ProductEntity">
+		SELECT product_id, name, description, price, stock, status, image_url
+		FROM products
+		WHERE status = 'ON_SALE'
+		ORDER BY product_id
+	</select>
+
+	<select id="findById" resultType="com.example.ec.repository.entity.ProductEntity">
+		SELECT product_id, name, description, price, stock, status, image_url
+		FROM products
+		WHERE product_id = #{productId}
+	</select>
+
+	<select id="findOnSaleById" resultType="com.example.ec.repository.entity.ProductEntity">
+		SELECT product_id, name, description, price, stock, status, image_url
+		FROM products
+		WHERE product_id = #{productId} AND status = 'ON_SALE'
+	</select>
+
+	<update id="decreaseStockIfAvailable">
+		UPDATE products
+		SET stock = stock - #{quantity}
+		WHERE product_id = #{productId}
+			AND status = 'ON_SALE'
+			AND stock &gt;= #{quantity}
+	</update>
+</mapper>

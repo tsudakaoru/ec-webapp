@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>エラー | ECサイト</title>
+</head>
+<body>
+  <main>
+    <h1>ご注文を完了できません</h1>
+    <p th:text="${errorMessage}">処理中にエラーが発生しました。</p>
+    <a th:href="@{/products}">商品一覧へ戻る</a>
+  </main>
+</body>
+</html>

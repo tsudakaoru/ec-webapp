@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#17382d">
+  <title>商品一覧 | ECサイト</title>
+  <link rel="stylesheet" th:href="@{/css/products.css}">
+  <script th:src="@{/js/products.js}" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" th:href="@{/products}" aria-label="ECサイト 商品一覧">
+        <span class="brand-mark" aria-hidden="true">e</span>
+        <span>ECサイト</span>
+      </a>
+      <a class="cart-link" th:href="@{/cart}" th:attr="aria-label=|カートを見る。現在${cartCount}点|">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 4h2l2.2 10.2a2 2 0 0 0 2 1.6h8.5a2 2 0 0 0 1.9-1.4L21 8H6" />
+          <circle cx="10" cy="20" r="1" />
+          <circle cx="18" cy="20" r="1" />
+        </svg>
+        <span>カートを見る</span>
+        <span class="cart-count" aria-live="polite" th:text="${cartCount}">0</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <section aria-labelledby="page-title">
+      <div class="page-intro">
+        <div>
+          <p class="eyebrow">THE EXECUTIVE SELECTION · 01</p>
+          <h1 id="page-title">商品一覧</h1>
+        </div>
+        <p class="item-total"><strong th:text="${#numbers.formatInteger(products.size(), 2)}">03</strong> ITEMS</p>
+      </div>
+
+      <div class="product-grid">
+        <article class="product-card" th:each="product : ${products}">
+          <div class="product-visual">
+            <img th:src="${product.imageUrl}" th:alt="${product.name}" width="1536" height="1024">
+            <span class="stock-tag" th:classappend="${product.stock == 0} ? ' out' : ''"
+                  th:text="${product.stock > 0 ? '在庫あり' : '在庫なし'}">在庫あり</span>
+          </div>
+          <div class="product-info">
+            <h2 class="product-name" th:text="${product.name}">商品名</h2>
+            <p class="product-description" th:text="${product.description}">商品説明</p>
+            <p class="product-price" th:text="|¥${#numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')}|">¥5,980</p>
+            <div class="card-actions">
+              <a class="button button-secondary" th:href="@{/products/{productId}(productId=${product.productId})}">詳細を見る</a>
+              <form class="add-to-cart-form" th:action="@{/products/cart}" method="post"
+                    th:attr="data-product-name=${product.name},data-stock=${product.stock},data-current-quantity=${cartQuantities[product.productId]}">
+                <input type="hidden" name="productId" th:value="${product.productId}">
+                <button class="button button-primary add-to-cart" type="submit"
+                        th:disabled="${product.stock == 0 or cartQuantities[product.productId] >= product.stock}"
+                        th:text="${product.stock == 0 ? '在庫なし' : (cartQuantities[product.productId] >= product.stock ? '追加済み' : 'カートに追加')}">カートに追加</button>
+              </form>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="page-note">
+        <span>表示中の商品 <span th:text="${products.size()}">3</span>点</span>
+        <span>仕事道具にも、選ぶ理由を。</span>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+</body>
+</html>
